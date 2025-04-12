@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Generator API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #1e1e1e;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        h1, h2 {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <h1>String Generator</h1>
+    <div id="generate-section">
+        <button id="generate-strings-btn">Generate Strings</button>
+        <pre id="generated-strings-content"></pre>
+        <button id="next-btn" class="hidden">Next</button>
+    </div>
+    <div id="validate-section" class="hidden">
+        <h2>Validate Strings</h2>
+        <button id="validate-strings-btn">Validate Strings</button>
+        <pre id="validated-strings-content"></pre>
+        <div class="buttons">
+            <button id="restart-btn">Restart</button>
+            <button id="stop-btn">Stop</button>
+        </div>
+    </div>
+    <div id="thank-you-section" class="hidden">
+        <h2>Thank you for using our API!</h2>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateStringsBtn = document.getElementById('generate-strings-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const validateStringsBtn = document.getElementById('validate-strings-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const generateSection = document.getElementById('generate-section');
+            const validateSection = document.getElementById('validate-section');
+            const thankYouSection = document.getElementById('thank-you-section');
+
+            generateStringsBtn.addEventListener('click', () => {
+                fetch('/generate_strings')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('generated-strings-content').textContent = data.join('\n');
+                        nextBtn.classList.remove('hidden');
+                    });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                generateSection.classList.add('hidden');
+                validateSection.classList.remove('hidden');
+            });
+
+            validateStringsBtn.addEventListener('click', () => {
+                fetch('/validate_strings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const validatedContent = data.map(item => `${item.string}: ${item.checkmark}`).join('\n');
+                        document.getElementById('validated-strings-content').textContent = validatedContent;
+                    });
+            });
+
+            restartBtn.addEventListener('click', () => {
+                generateSection.classList.remove('hidden');
+                validateSection.classList.add('hidden');
+                thankYouSection.classList.add('hidden');
+                document.getElementById('generated-strings-content').textContent = '';
+                document.getElementById('validated-strings-content').textContent = '';
+                nextBtn.classList.add('hidden');
+            });
+
+            stopBtn.addEventListener('click', () => {
+                validateSection.classList.add('hidden');
+                thankYouSection.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

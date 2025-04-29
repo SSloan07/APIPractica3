@@ -37,7 +37,6 @@ class Rules_table:
                     pile = "ε"
                 set_of_applied_rules.append(["(v)" , f"q1 , {string} , {pile}"])
 
-        table = tabulate(set_of_applied_rules, headers=["Rules", "Computation of M on input x"], tablefmt="grid")
-        print(table) 
+        table = tabulate(set_of_applied_rules, headers=["Rules", "Computation of M on input x"], tablefmt="html")
 
-        print("\n")
+        return table
